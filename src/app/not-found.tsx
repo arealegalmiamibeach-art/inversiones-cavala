@@ -13,7 +13,7 @@ export default function NotFound() {
         <p className="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Error 404</p>
         <h1 className="mt-2 text-lg font-semibold">No encontramos esta página</h1>
         <p className="mt-2 text-sm leading-6 text-white/65">
-          El enlace puede estar incompleto o el registro ya no existe.
+          El enlace puede estar incompleto o el registro ya no existe.!
         </p>
         <Link href="/dashboard" className="glass-btn-primary mt-6 justify-center">
           Volver al inicio
