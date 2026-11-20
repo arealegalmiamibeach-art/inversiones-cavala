@@ -1,0 +1,460 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply overflow-x-hidden bg-[#05060c] text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .input {
+    @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500;
+  }
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  /* ─── Glassmorphism — usado en el shell (sidebar/header) y el Dashboard ─── */
+
+  .glass {
+    @apply border border-white/10 bg-white/[0.06] shadow-glass backdrop-blur-xl backdrop-saturate-150;
+  }
+  .glass-panel {
+    @apply glass rounded-2xl;
+  }
+
+  /* Card Table — borde fino sin fondo, como datatable-1 */
+  .records-card {
+    @apply rounded-xl border border-white/[0.15] bg-transparent;
+  }
+  .glass-card {
+    @apply glass rounded-2xl transition-all duration-300 hover:border-white/20 hover:bg-white/[0.09];
+  }
+  .glass-input {
+    @apply block w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/55 backdrop-blur-md transition-colors focus:border-brand-400/70 focus:outline-none focus:ring-1 focus:ring-brand-400/50;
+  }
+  .glass-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_8px_20px_-6px_rgba(37,99,235,0.6)] transition-all hover:bg-brand-800 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_10px_24px_-6px_rgba(37,99,235,0.8)] focus:outline-none focus:ring-2 focus:ring-brand-400/60 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .glass-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/20 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .glass-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.07] px-2.5 py-0.5 text-xs font-medium text-white/85 backdrop-blur-md;
+  }
+
+  /* ─── Contenido de listas/fichas sobre fondo oscuro (páginas de Entidades, Procesos, etc.) ─── */
+
+  .glass-empty {
+    @apply glass-panel flex flex-col items-center justify-center py-16 text-center;
+  }
+  .glass-toolbar {
+    @apply border-b border-white/10 bg-white/[0.03] px-4 py-3;
+  }
+
+  .view-control {
+    @apply w-full rounded-lg border border-white/[0.14] bg-[#0e1018] px-3 py-2 text-[11px] text-white/90 outline-none transition-colors placeholder:text-white/50 focus:border-brand-400/55 focus:ring-1 focus:ring-brand-400/25;
+    color-scheme: dark;
+  }
+
+  /* Light panel overrides — cream surface used by the table popovers */
+  .light-panel .view-control {
+    @apply border-neutral-300 text-neutral-800 placeholder:text-neutral-400 focus:border-neutral-400 focus:ring-neutral-300;
+    background: #f7f4eb;
+    color-scheme: light;
+  }
+  .light-panel select.view-control option { background: #eeeadf; color: #1a1a1a; }
+  .light-panel .view-btn { @apply text-neutral-800; }
+  .light-panel { @apply text-neutral-800; }
+  .light-panel h3 { @apply text-neutral-900; }
+  .light-panel p { @apply text-neutral-400; }
+  .glass-thead-row {
+    @apply border-b border-white/[0.08] text-left text-[11.5px] font-bold uppercase tracking-widest;
+    color: #fff;
+    text-shadow:
+      0 0 3px rgba(255, 255, 255, 0.7),
+      0 0 10px rgba(200, 220, 255, 0.3),
+      0 0 24px rgba(180, 210, 255, 0.12);
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .glass-tbody {
+    @apply divide-y divide-white/[0.06];
+  }
+  .glass-row {
+    @apply transition-colors duration-150 hover:bg-white/[0.035];
+  }
+  .glass-list-item {
+    @apply flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5;
+  }
+  .glass-chip {
+    @apply inline-flex items-center rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-brand-400/40 hover:text-brand-300;
+  }
+
+  /* Panel de detalle: propiedades planas inspiradas en el patrón de Veczail. */
+  .entity-sheet-content .glass-input {
+    @apply rounded-md border-transparent bg-transparent px-2.5 py-1.5 shadow-none;
+  }
+  .entity-sheet-content .glass-input:hover {
+    @apply bg-white/[0.035];
+  }
+  .entity-sheet-content .glass-input:focus {
+    @apply border-brand-400/30 bg-white/[0.045] ring-1 ring-brand-400/25;
+  }
+  .entity-sheet-content > a:last-child {
+    @apply inline-flex items-center rounded-md border border-white/[0.07] bg-white/[0.035] px-3 py-2 font-medium transition-colors hover:border-brand-400/25 hover:bg-brand-500/10;
+  }
+
+  /* ─── Tokens de visualización de datos ───────────────────────────────────
+     Validados con el script de contraste/daltonismo contra la superficie
+     glass oscura (#14151b): banda de luminosidad, piso de croma, separación
+     CVD, piso de visión normal y contraste ≥3:1. No cambiar sin re-validar. */
+  .viz {
+    --viz-critical: #d03b3b; /* vencido */
+    --viz-warning: #c98500;  /* próximo a vencer */
+    --viz-ok: #3987e5;       /* al día / con seguimiento */
+    --viz-neutral: #6b7183;  /* sin dato / sin seguimiento */
+  }
+
+  /* Tarjeta con tilt 3D + reflejo que sigue al cursor (glare) */
+  .glare-card {
+    @apply glass relative isolate overflow-hidden rounded-2xl;
+    --mx: 50%;
+    --my: 50%;
+    --rx: 0deg;
+    --ry: 0deg;
+    --glare-o: 0;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    transition: transform 300ms ease-out, border-color 300ms ease,
+      background-color 300ms ease, box-shadow 300ms ease;
+    will-change: transform;
+  }
+  .glare-card:hover {
+    @apply border-white/20 bg-white/[0.09] shadow-glass-lg;
+  }
+  .glare-shine {
+    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
+    background: radial-gradient(
+      420px circle at var(--mx) var(--my),
+      var(--glare-color),
+      transparent 65%
+    );
+    opacity: var(--glare-o);
+    transition: opacity 300ms ease;
+  }
+}
+
+@layer utilities {
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scrollbar-glass {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  }
+  .scrollbar-glass::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-glass::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+  }
+  .scrollbar-glass::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none !important;
+  }
+  .glare-card {
+    transform: none !important;
+  }
+}
+
+@keyframes notion-drop-pulse {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+
+@keyframes embedded-file-window-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.975) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.notion-drop-line {
+  animation: notion-drop-pulse 900ms ease-in-out infinite;
+}
+
+.embedded-file-window {
+  animation: embedded-file-window-enter 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Toolbar buttons: estilo moderno con transiciones visibles ─────── */
+.view-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.view-btn:hover {
+  background: #e5e0d4;
+  color: rgba(0, 0, 0, 0.85);
+}
+.view-btn:active {
+  transform: scale(0.96);
+}
+.view-btn[data-active="true"] {
+  background: #eeeadf;
+  color: rgb(17 24 39);
+}
+
+/* Panel de filtros — entrada con slide visible */
+@keyframes view-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.view-panel-enter {
+  animation: view-panel-enter 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dropdown popover entrance */
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.dropdown-enter {
+  animation: dropdown-enter 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Chips de filtro activo */
+.filter-chip {
+  transition: all 180ms ease;
+}
+.filter-chip:hover {
+  background: rgba(99, 140, 255, 0.12);
+  border-color: rgba(99, 140, 255, 0.25);
+}
+
+/* Filas de tabla con transición visible */
+.table-row-hover {
+  transition: background-color 200ms ease;
+}
+.table-row-hover:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.records-mobile-value {
+  overflow-wrap: anywhere;
+}
+
+.records-mobile-value > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* "Mostrar contenido completo" del menú de propiedades: deshace el truncado
+   de una sola línea que cada columna aplica por defecto, sin tocar el ancho
+   de la columna. Cubre las dos convenciones de truncado usadas en las
+   tablas (`.truncate` y `.line-clamp-*`), venga el valor de donde venga. */
+.records-cell-wrap {
+  vertical-align: top;
+}
+
+.records-cell-wrap .truncate {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.records-cell-wrap [class*="line-clamp-"] {
+  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+}
+
+/* "No ajustar contenido": mantiene la celda en una sola franja visual. Es
+   especialmente útil para propiedades de relación con muchos chips, que de
+   otro modo convierten una fila en un bloque muy alto. El contenido no se
+   elimina: basta volver a "Ajustar contenido" desde el menú de la propiedad. */
+.records-cell-nowrap {
+  vertical-align: middle;
+}
+
+.records-cell-nowrap > * {
+  max-width: 22rem !important;
+  max-height: 2rem;
+  overflow: hidden;
+}
+
+.records-cell-nowrap .flex-wrap {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.records-cell-nowrap .glass-chip {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* La tabla usa su propia barra horizontal fija. La barra nativa conserva el
+   desplazamiento con trackpad/rueda, pero no se dibuja para evitar duplicados. */
+.records-table-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.records-table-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chromium/Safari dibujan negro el indicador nativo de fecha si el control no
+   declara un esquema oscuro. Se aplica a cualquier input de fecha sobre superficie
+   oscura: glass-input, view-control y `date-dark` (propiedades personalizadas,
+   que no usan ninguna de las dos clases). */
+input[type="date"].glass-input,
+input[type="date"].view-control,
+input[type="date"].date-dark {
+  color-scheme: dark;
+}
+
+input[type="date"].glass-input::-webkit-calendar-picker-indicator,
+input[type="date"].view-control::-webkit-calendar-picker-indicator,
+input[type="date"].date-dark::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+/* Los popovers de la tabla usan superficie crema: ahí el indicador va oscuro. */
+.light-panel input[type="date"].view-control {
+  color-scheme: light;
+}
+
+.light-panel input[type="date"].view-control::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.65;
+}
+
+@media (max-width: 1023px) {
+  .app-main > div {
+    min-width: 0;
+  }
+
+  .app-main .p-6 {
+    padding: 1rem;
+  }
+
+  .app-main .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .app-main .glass-panel,
+  .app-main .glass-card {
+    border-radius: 0.875rem;
+  }
+
+  .app-main .text-5xl {
+    font-size: 2.25rem;
+    line-height: 1;
+  }
+
+  .glare-card {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .app-main .p-5 {
+    padding: 1rem;
+  }
+
+  .app-main .view-control,
+  .app-main .glass-input,
+  .app-main input,
+  .app-main select,
+  .app-main textarea {
+    font-size: 16px;
+  }
+
+  .spotlight-filter-shell {
+    width: 100%;
+    max-width: none;
+  }
+
+  .spotlight-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    filter: none !important;
+  }
+
+  .spotlight-search {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .spotlight-filters {
+    width: 100% !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .view-btn {
+    transition: none !important;
+  }
+  .view-panel-enter {
+    animation: none !important;
+  }
+  .notion-drop-line {
+    animation: none !important;
+  }
+  .embedded-file-window {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,53 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.next-permisos/
+/.next-auditoria/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# datos crudos de migración / documentos legales — nunca al repo
+/PAQUETE_AVALA_COMPLETO/
+*.docx
+cotizacion_sistema_legal.html
+Bitacora-Migracion-Veczail.md
+
+# repositorios, respaldos y archivos legales auxiliares locales
+/cerebro-veczail-ai-main/
+/audit-backups/
+/.codex-validar-propiedades.mjs
+/tsconfig.codex.json
+/*.pdf
+/*.jpeg

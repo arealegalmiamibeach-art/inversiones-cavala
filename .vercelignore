@@ -1,0 +1,26 @@
+# datos crudos de migración / documentos legales — nunca deben salir de esta máquina
+/PAQUETE_AVALA_COMPLETO/
+*.docx
+cotizacion_sistema_legal.html
+Bitacora-Migracion-Veczail.md
+
+# no necesarios para el deploy (Vercel los reconstruye o no los usa)
+/node_modules
+/.next
+/.next-permisos
+/.next-auditoria
+/.git
+.env
+.env.*
+!.env.example
+/.claude
+.DS_Store
+
+# Repositorios y datos auxiliares locales ajenos a la app
+/cerebro-veczail-ai-main
+/audit-backups
+/scripts
+/.codex-validar-propiedades.mjs
+/tsconfig.codex.json
+/*.pdf
+/*.jpeg

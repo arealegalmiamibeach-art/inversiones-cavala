@@ -1,0 +1,3 @@
+-- Migración aplicada en remoto antes de trackear migraciones en el repo.
+-- Marcador de historial para que `supabase db push` alinee local↔remoto.
+-- El esquema real se recupera con `supabase db pull` (requiere Docker).
