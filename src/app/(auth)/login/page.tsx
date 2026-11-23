@@ -13,6 +13,10 @@ export default function LoginPage() {
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    // El middleware deja en `?next=` la página que se quería abrir; la acción
+    // la valida antes de redirigir.
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next) formData.set("next", next);
     try {
       const result = await login(formData);
       if (result?.error) setError(result.error);

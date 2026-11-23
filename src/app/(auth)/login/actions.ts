@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { destinoSeguro } from "@/lib/auth/destino";
 
 export async function login(formData: FormData) {
   const email = formData.get("email");
@@ -34,7 +35,9 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  // Vuelve a la página que se intentó abrir (p. ej. el enlace de una alerta
+  // del correo). `destinoSeguro` descarta cualquier dirección externa.
+  redirect(destinoSeguro(formData.get("next")));
 }
 
 export async function logout() {

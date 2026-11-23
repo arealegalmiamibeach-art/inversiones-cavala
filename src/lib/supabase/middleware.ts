@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { nivelAcceso, seccionRuta, type Permisos, type Rol } from "@/lib/auth/roles";
 import { HEADER_SESION, codificarSesion, type SesionHeader } from "@/lib/auth/sesion-header";
+import { destinoSeguro } from "@/lib/auth/destino";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -42,14 +43,25 @@ export async function updateSession(request: NextRequest) {
   if (!user && !isLoginRoute && !isPublicAuthRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.search = "";
+    // Se recuerda adónde iba (p. ej. el enlace de una alerta del correo) para
+    // llevarlo ahí después de iniciar sesión, en vez de al dashboard.
+    const destino = `${pathname}${request.nextUrl.search}`;
+    if (pathname !== "/" && !pathname.startsWith("/api/") && destinoSeguro(destino) === destino) {
+      url.searchParams.set("next", destino);
+    }
     return NextResponse.redirect(url);
   }
 
   // Only redirect away from /login, never from /update-password
   if (user && isLoginRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    const [ruta, consulta = ""] = destinoSeguro(request.nextUrl.searchParams.get("next")).split("?");
+    url.pathname = ruta;
+    url.search = consulta ? `?${consulta}` : "";
+    const response = NextResponse.redirect(url);
+    for (const cookie of supabaseResponse.cookies.getAll()) response.cookies.set(cookie);
+    return response;
   }
 
   // El header de sesión que mande el navegador nunca se respeta: sólo vale el
