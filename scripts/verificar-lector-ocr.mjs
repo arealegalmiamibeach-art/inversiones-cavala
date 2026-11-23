@@ -1,5 +1,5 @@
 // Prueba sintética de una página. No envía documentos del cliente ni imprime claves.
-// node --env-file=.env --env-file=.env.local scripts/verificar-lector-ocr.mjs
+// node --env-file=.env scripts/verificar-lector-ocr.mjs
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
 import { markdownWithInlineTables } from "../src/lib/lector-ia/ocr-tables.ts";

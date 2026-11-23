@@ -1,5 +1,5 @@
 // End-to-end smoke test with an ephemeral account; no emails or client documents.
-// TEST_BASE_URL=http://localhost:3108 node --env-file=.env --env-file=.env.local scripts/verificar-lector-http.mjs
+// TEST_BASE_URL=http://localhost:3108 node --env-file=.env scripts/verificar-lector-http.mjs
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";

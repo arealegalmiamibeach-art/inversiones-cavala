@@ -22,7 +22,7 @@ Límites iniciales por acceso:
 
 La bolsa mensual de Mistral se reserva exclusivamente para Cavala. Los
 contadores internos reflejan el consumo confirmado por esta aplicación y las
-claves se configuran sin prefijos públicos en `.env.local` y, al desplegar, en
+claves se configuran sin prefijos públicos en `.env` y, al desplegar, en
 las variables privadas del servidor.
 
 Comprobación local: Mistral OCR 4.1, OpenAI GPT-5.6 Luna y Grok 4.3 respondieron

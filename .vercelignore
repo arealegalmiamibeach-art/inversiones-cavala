@@ -12,7 +12,6 @@ Bitacora-Migracion-Veczail.md
 /.git
 .env
 .env.*
-!.env.example
 /.claude
 .DS_Store
 

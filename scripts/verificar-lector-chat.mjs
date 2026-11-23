@@ -1,5 +1,5 @@
 // Uses the same prompt, request builder and SSE parser as the chat, with synthetic data.
-// node --experimental-strip-types --env-file=.env --env-file=.env.local scripts/verificar-lector-chat.mjs
+// node --experimental-strip-types --env-file=.env scripts/verificar-lector-chat.mjs
 import assert from "node:assert/strict";
 import { groqChatBody, lectorRequestMessages } from "../src/lib/lector-ia/chat-config.ts";
 import { consumeProviderStream } from "../src/lib/lector-ia/stream.ts";

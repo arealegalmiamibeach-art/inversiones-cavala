@@ -27,7 +27,7 @@
 ## Plan de acción — Sprint 2
 
 ### Fase 0 — Configuración (prerequisito)
-- [ ] Crear `.env.local` con las variables de entorno (ver §Variables de entorno)
+- [ ] Crear `.env` con las variables de entorno (ver §Variables de entorno)
 - [ ] Crear el primer usuario administrador en Supabase Auth y ejecutar:
   ```sql
   update perfiles set rol = 'admin', activo = true where correo = 'tu@correo.com';
@@ -79,7 +79,7 @@ Orden sugerido por complejidad creciente:
 
 ---
 
-## Variables de entorno (.env.local)
+## Variables de entorno (.env)
 
 ```bash
 # Supabase
@@ -103,7 +103,7 @@ ALERTAS_CC=<correos extra separados por coma, opcional>
 > El token R2 es de tipo Account API Token llamado `cavala-legal-docs-app`,
 > con permisos Object Read & Write limitados al bucket. TTL Forever.
 >
-> Plantilla completa en `.env.example`. Migraciones nuevas a aplicar
+> Migraciones nuevas a aplicar
 > (`supabase db push` o SQL editor): `20260831000100_alta_baja_rls.sql`
 > (alta/baja de entidades) y `20260831000200_eventos.sql` (diligencias
 > editables). El correo diario necesita además la `SUPABASE_SERVICE_ROLE_KEY`.

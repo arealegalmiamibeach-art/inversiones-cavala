@@ -1,11 +1,11 @@
 // Prueba mínima con texto ficticio; no imprime claves ni documentos del cliente.
-// node --env-file=.env --env-file=.env.local scripts/verificar-lector-proveedores.mjs
+// node --env-file=.env scripts/verificar-lector-proveedores.mjs
 import { readFileSync } from "node:fs";
 import { parseEnv } from "node:util";
 import { spawnSync } from "node:child_process";
 
 if (process.argv.includes("--reutilizar-xai")) {
-  const target = ".env.local";
+  const target = ".env";
   const original = readFileSync(target, "utf8");
   const local = parseEnv(original);
   if (!local.XAI_API_KEY?.trim()) {
