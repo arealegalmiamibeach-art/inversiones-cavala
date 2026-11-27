@@ -342,6 +342,8 @@ export function RecordsTable<Row>({
   columns: columnasEntrada,
   rowKey,
   rowParentKey,
+  separarHijasAlAgrupar = false,
+  onAgrupacionChange,
   onRowClick,
   storageKey,
   countLabel,
@@ -367,6 +369,15 @@ export function RecordsTable<Row>({
    * si el padre no está en la lista, la hija se muestra como fila normal.
    */
   rowParentKey?: (row: Row) => string | null | undefined;
+  /**
+   * Al agrupar por columna, cada hija va al grupo de SU propio valor en vez
+   * de heredar el del padre (p. ej. un subpredio de Diego Calderón dentro de
+   * una matriz de LCV). Si coincide con el del padre sigue anidada debajo.
+   * Sin esto (contratos/adendas) la familia entera viaja con el padre.
+   */
+  separarHijasAlAgrupar?: boolean;
+  /** Avisa cuando la tabla entra o sale de una vista agrupada. */
+  onAgrupacionChange?: (agrupado: boolean) => void;
   onRowClick?: (row: Row) => void;
   storageKey: string;
   countLabel: string;
@@ -1044,15 +1055,63 @@ export function RecordsTable<Row>({
   // agrupar mueven familias enteras: una adenda nunca se separa de su contrato.
   const familias = useMemo(() => agruparFamilias(filasOrdenadas, rowKey, rowParentKey), [filasOrdenadas, rowKey, rowParentKey]);
   const visibleRows = useMemo(() => (rowParentKey ? familias.flat() : filasOrdenadas), [familias, filasOrdenadas, rowParentKey]);
-  const clavesAnidadas = useMemo(
-    () => new Set(rowParentKey ? familias.flatMap((familia) => familia.slice(1).map(rowKey)) : []),
-    [familias, rowKey, rowParentKey]
-  );
 
   const columnaAgrupada = grouping.columnId ? columnasPorId.get(grouping.columnId) : undefined;
   const agrupandoPorColumna = enableGrouping && grouping.modo === "columna" && Boolean(columnaAgrupada);
   const agrupandoPersonalizado = enableGrouping && grouping.modo === "personalizado";
   const agrupado = agrupandoPorColumna || agrupandoPersonalizado;
+
+  const onAgrupacionChangeRef = useRef(onAgrupacionChange);
+  onAgrupacionChangeRef.current = onAgrupacionChange;
+  useEffect(() => {
+    onAgrupacionChangeRef.current?.(agrupado);
+  }, [agrupado]);
+
+  const claveGrupoDeFila = useCallback(
+    (row: Row): string => {
+      const column = columnaAgrupada!;
+      const prefijoGrupo = `${column.id}:`;
+      const grupoForzado = grupoForzadoPorFila[rowKey(row)];
+      return grupoForzado?.startsWith(prefijoGrupo)
+        ? grupoForzado.slice(prefijoGrupo.length)
+        : claveValor(valorGrupo(column, row));
+    },
+    [columnaAgrupada, grupoForzadoPorFila, rowKey]
+  );
+
+  // Familias tal como se reparten en los grupos por columna. Con
+  // `separarHijasAlAgrupar`, una hija cuyo valor difiere del de su padre se
+  // desprende y arranca su propia familia (con sus descendientes que
+  // compartan su valor) para caer en el grupo que le corresponde.
+  const familiasAgrupables = useMemo(() => {
+    if (!separarHijasAlAgrupar || !agrupandoPorColumna || !rowParentKey) return familias;
+    const salida: Row[][] = [];
+    for (const familia of familias) {
+      const subfamiliaPorClave = new Map<string, Row[]>();
+      const grupoPorClave = new Map<string, string>();
+      for (const row of familia) {
+        const clave = rowKey(row);
+        const grupo = claveGrupoDeFila(row);
+        grupoPorClave.set(clave, grupo);
+        const padre = rowParentKey(row);
+        const subfamiliaPadre = padre ? subfamiliaPorClave.get(padre) : undefined;
+        if (subfamiliaPadre && grupoPorClave.get(padre!) === grupo) {
+          subfamiliaPadre.push(row);
+          subfamiliaPorClave.set(clave, subfamiliaPadre);
+        } else {
+          const nueva = [row];
+          salida.push(nueva);
+          subfamiliaPorClave.set(clave, nueva);
+        }
+      }
+    }
+    return salida;
+  }, [agrupandoPorColumna, claveGrupoDeFila, familias, rowKey, rowParentKey, separarHijasAlAgrupar]);
+
+  const clavesAnidadas = useMemo(
+    () => new Set(rowParentKey ? familiasAgrupables.flatMap((familia) => familia.slice(1).map(rowKey)) : []),
+    [familiasAgrupables, rowKey, rowParentKey]
+  );
 
   const grupos = useMemo<Grupo<Row>[]>(() => {
     if (!agrupado) return [];
@@ -1077,13 +1136,9 @@ export function RecordsTable<Row>({
     }
     const column = columnaAgrupada!;
     const porClave = new Map<string, { filas: Row[]; valorCreacion: unknown }>();
-    for (const familia of familias) {
+    for (const familia of familiasAgrupables) {
       const row = familia[0];
-      const prefijoGrupo = `${column.id}:`;
-      const grupoForzado = grupoForzadoPorFila[rowKey(row)];
-      const clave = grupoForzado?.startsWith(prefijoGrupo)
-        ? grupoForzado.slice(prefijoGrupo.length)
-        : claveValor(valorGrupo(column, row));
+      const clave = claveGrupoDeFila(row);
       const actual = porClave.get(clave);
       if (actual) actual.filas.push(...familia);
       else porClave.set(clave, {
@@ -1114,8 +1169,9 @@ export function RecordsTable<Row>({
     etiquetaValor,
     grouping.ocultarVacios,
     grouping.orden,
-    grupoForzadoPorFila,
+    claveGrupoDeFila,
     familias,
+    familiasAgrupables,
     gruposPersonalizados,
     rowKey,
   ]);

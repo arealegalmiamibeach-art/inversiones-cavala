@@ -82,6 +82,9 @@ export function PrediosTable({
 }) {
   const [abierto, setAbierto] = useState<string | null>(null);
   const [expandidos, setExpandidos] = useState<Set<string>>(() => new Set());
+  // Con la tabla agrupada (p. ej. por propietario) cada subpredio se reparte
+  // según su propio valor, así que se pasan todos aunque su matriz esté cerrada.
+  const [agrupada, setAgrupada] = useState(false);
   const [q, setQ] = useState(qProp ?? "");
   const [tipoFiltro, setTipoFiltro] = useState(tipo ?? "");
   const [registradoFiltro, setRegistradoFiltro] = useState(registrado ?? "");
@@ -184,14 +187,14 @@ export function PrediosTable({
         for (const hijo of hijos) if (idsIncluidosPorFiltro.has(hijo.id)) agregar(hijo);
         return;
       }
-      if (expandidos.has(predio.id)) for (const hijo of hijos) agregar(hijo);
+      if (agrupada || expandidos.has(predio.id)) for (const hijo of hijos) agregar(hijo);
     };
 
     for (const predio of predios) {
       if (!jerarquia.padrePorHijo.has(predio.id) && (!idsIncluidosPorFiltro || idsIncluidosPorFiltro.has(predio.id))) agregar(predio);
     }
     return salida;
-  }, [expandidos, idsIncluidosPorFiltro, jerarquia, predios]);
+  }, [agrupada, expandidos, idsIncluidosPorFiltro, jerarquia, predios]);
 
   const subprediosTotales = jerarquia.padrePorHijo.size;
 
@@ -293,29 +296,37 @@ export function PrediosTable({
         const anidado = esHijoVisible(predio);
         const desplegado = idsIncluidosPorFiltro
           ? hijos.some((hijo) => idsIncluidosPorFiltro.has(hijo.id))
-          : expandidos.has(predio.id);
+          : agrupada || expandidos.has(predio.id);
+        const matriz = anidado ? porId.get(jerarquia.padrePorHijo.get(predio.id)!) : undefined;
         return (
           <div className={cn("flex min-w-[190px] items-center gap-1.5", anidado && "pl-5")}>
             {hijos.length > 0 ? (
               <button
                 type="button"
-                title={desplegado ? "Ocultar subpredios" : `Ver ${hijos.length} subpredio${hijos.length === 1 ? "" : "s"}`}
+                title={agrupada ? "Con la tabla agrupada se muestran todos los subpredios" : desplegado ? "Ocultar subpredios" : `Ver ${hijos.length} subpredio${hijos.length === 1 ? "" : "s"}`}
                 aria-label={desplegado ? `Ocultar subpredios de ${predio.nombre}` : `Ver subpredios de ${predio.nombre}`}
                 onClick={(evento) => {
                   evento.stopPropagation();
-                  alternar(predio.id);
+                  if (!agrupada) alternar(predio.id);
                 }}
                 className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-white/50 transition-colors hover:bg-white/10 hover:text-white"
               >
                 <TrianguloDesplegable abierto={desplegado} />
               </button>
             ) : anidado ? (
-              <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-white/30" />
+              <span title={matriz ? `Subpredio de ${matriz.nombre}` : undefined} className="shrink-0">
+                <CornerDownRight className="h-3.5 w-3.5 text-white/30" />
+              </span>
             ) : (
               <span className="h-4 w-4 shrink-0" />
             )}
             <div className={cn("min-w-0 flex-1", anidado && "opacity-85")}>
               <InlineEditableText tabla="predios" id={predio.id} campo="nombre" valorInicial={predio.nombre} revalidar={REVALIDAR} className="font-medium text-white" onOpen={() => setAbierto(predio.id)} />
+              {agrupada && matriz && (
+                <p className="mt-0.5 truncate text-[10px] text-white/40" title={matriz.nombre}>
+                  Matriz: {matriz.nombre}
+                </p>
+              )}
             </div>
             {hijos.length > 0 && (
               <span className="shrink-0 rounded-full bg-white/[0.07] px-1.5 py-0.5 text-[9px] font-semibold text-white/60">
@@ -472,7 +483,7 @@ export function PrediosTable({
             <CrearRegistro clave="predios" className={BOTON_NUEVO_CLASE} />
             <ExportMenu nombre="predios" filtros={descripcionFiltros([["Búsqueda", q], ["Tipo", etiquetaDeOpcion(tipoOpciones, tipoFiltro)], ["Registrado", registradoFiltro]])} titulo="Predios — Inversiones Cavala" columnas={columnasDesdeTabla(columns)} filas={filas} />
           </div>
-        )} rowKey={(predio) => predio.id} rowParentKey={(predio) => jerarquia.padrePorHijo.get(predio.id) ?? null} onRowClick={(predio) => setAbierto(predio.id)} storageKey="predios" countLabel={hayFiltros ? `${prediosFiltrados.length.toLocaleString("es-PE")} predio${prediosFiltrados.length !== 1 ? "s" : ""} · filtrado de ${count}` : etiquetaConteoPredios(Math.max(count - subprediosTotales, 0), subprediosTotales)} defaultHidden={["ubicacion", "coordenadas", "fecha_adquisicion", "monto_copia_literal", "detalles", "archivador_drive", "archivador_fisico", ...columnasRelacionVacias(relacionesPorId)]} nuevoEnGrupo={(grupo) => <NuevoEnGrupo clave="predios" grupo={grupo} />} />
+        )} rowKey={(predio) => predio.id} rowParentKey={(predio) => jerarquia.padrePorHijo.get(predio.id) ?? null} separarHijasAlAgrupar onAgrupacionChange={setAgrupada} onRowClick={(predio) => setAbierto(predio.id)} storageKey="predios" countLabel={hayFiltros ? `${prediosFiltrados.length.toLocaleString("es-PE")} predio${prediosFiltrados.length !== 1 ? "s" : ""} · filtrado de ${count}` : etiquetaConteoPredios(Math.max(count - subprediosTotales, 0), subprediosTotales)} defaultHidden={["ubicacion", "coordenadas", "fecha_adquisicion", "monto_copia_literal", "detalles", "archivador_drive", "archivador_fisico", ...columnasRelacionVacias(relacionesPorId)]} nuevoEnGrupo={(grupo) => <NuevoEnGrupo clave="predios" grupo={grupo} />} />
       <PredioSheet id={abierto} onClose={() => setAbierto(null)} />
     </>
   );
